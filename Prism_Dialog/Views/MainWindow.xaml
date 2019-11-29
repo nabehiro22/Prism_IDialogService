@@ -1,0 +1,20 @@
+﻿<Window x:Class="Prism_Dialog.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        Title="{Binding Title}" Height="300" Width="300" WindowStartupLocation="CenterScreen">
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+		<Button Grid.Row="0" Content="ダイアログ表示" Command="{Binding ShowDialgo}" Height="25" Width="80"/>
+		<StackPanel Grid.Row="1" Orientation="Vertical">
+			<TextBlock Text="{Binding DialogValue1.Value}" Height="Auto" Width="Auto" HorizontalAlignment="Center"/>
+			<TextBlock Text="{Binding DialogValue2.Value}" Height="Auto" Width="Auto" HorizontalAlignment="Center"/>
+		</StackPanel>
+
+	</Grid>
+</Window>
