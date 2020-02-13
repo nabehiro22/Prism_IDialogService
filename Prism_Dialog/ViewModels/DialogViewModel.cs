@@ -2,11 +2,12 @@
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using System;
+using System.ComponentModel;
 using System.Reactive.Disposables;
 
 namespace Prism_Dialog.ViewModels
 {
-	public class DialogViewModel : BindableBase, IDialogAware // IDialogAwareが追加される
+	public class DialogViewModel : BindableBase, IDialogAware, INotifyPropertyChanged // IDialogAwareが追加される
 	{
 		/// <summary>
 		/// ウィンドウに表示されるタイトル
