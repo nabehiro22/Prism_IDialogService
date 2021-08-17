@@ -1,6 +1,7 @@
 ﻿using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using System;
 using System.ComponentModel;
 using System.Reactive.Disposables;
@@ -55,12 +56,9 @@ namespace Prism_Dialog.ViewModels
 		public DialogViewModel()
 		{
 			// 「はい」ボタンが押された時はButtonResult.YesとDialogParametersを返す
-			this.YesCommand.Subscribe(_ => this.RequestClose?.Invoke(new DialogResult(ButtonResult.Yes, Result)));
+			this.YesCommand.Subscribe(_ => this.RequestClose?.Invoke(new DialogResult(ButtonResult.Yes, Result))).AddTo(Disposable);
 			// 「いいえ」ボタンが押された時はButtonResult.Noだけを返す
-			this.NoCommand.Subscribe(_ => this.RequestClose?.Invoke(new DialogResult(ButtonResult.No)));
-			// Disposableに追加
-			Disposable.Add(YesCommand);
-			Disposable.Add(NoCommand);
+			this.NoCommand.Subscribe(_ => this.RequestClose?.Invoke(new DialogResult(ButtonResult.No))).AddTo(Disposable);
 
 			// ウィンドウを閉じる時に返す値をセットする例
 			Result.Add("key1", "Value1");
