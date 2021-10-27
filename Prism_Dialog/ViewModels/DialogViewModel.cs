@@ -43,7 +43,7 @@ namespace Prism_Dialog.ViewModels
 		/// <summary>
 		/// 親ウィンドウからの情報
 		/// </summary>
-		public ReactivePropertySlim<string> Message2 { get; } = new ReactivePropertySlim<string>("");
+		public ReactivePropertySlim<int> Message2 { get; } = new ReactivePropertySlim<int>();
 
 		/// <summary>
 		/// ウィンドウを閉じる時に渡すDialogParameters
@@ -56,13 +56,9 @@ namespace Prism_Dialog.ViewModels
 		public DialogViewModel()
 		{
 			// 「はい」ボタンが押された時はButtonResult.YesとDialogParametersを返す
-			this.YesCommand.Subscribe(_ => this.RequestClose?.Invoke(new DialogResult(ButtonResult.Yes, Result))).AddTo(Disposable);
+			_ = YesCommand.Subscribe(_ => RequestClose?.Invoke(new DialogResult(ButtonResult.Yes, Result))).AddTo(Disposable);
 			// 「いいえ」ボタンが押された時はButtonResult.Noだけを返す
-			this.NoCommand.Subscribe(_ => this.RequestClose?.Invoke(new DialogResult(ButtonResult.No))).AddTo(Disposable);
-
-			// ウィンドウを閉じる時に返す値をセットする例
-			Result.Add("key1", "Value1");
-			Result.Add("key2", 100);
+			_ = NoCommand.Subscribe(_ => RequestClose?.Invoke(new DialogResult(ButtonResult.No))).AddTo(Disposable);
 		}
 
 		/// <summary>
@@ -75,23 +71,27 @@ namespace Prism_Dialog.ViewModels
 		}
 
 		/// <summary>
-		/// ダイアログClose時のイベントハンドラ
+		/// ダイアログClose時実行されるメソッド
 		/// </summary>
 		public void OnDialogClosed()
 		{
+			// ウィンドウを閉じる時に返す値をセットする例
+			Result.Add("key1", "Value1");
+			Result.Add("key2", 100);
+
 			// まどめてDispose
 			Disposable.Dispose();
 		}
 
 		/// <summary>
-		/// ダイアログOpen時のイベントハンドラ
+		/// ダイアログOpen時に実行されるメソッド
 		/// </summary>
 		/// <param name="parameters"></param>
 		public void OnDialogOpened(IDialogParameters parameters)
 		{
-			// 例はダイアログを起動させたViewModelから来たKey「Message1」のValueを取得
-			this.Message1.Value = parameters.GetValue<string>("Message1");
-			this.Message2.Value = parameters.GetValue<string>("Message2");
+			// 例はダイアログを起動させたViewModelから来たKey「Message1」と「Message2」のValueを取得
+			Message1.Value = parameters.GetValue<string>("Message1");
+			Message2.Value = parameters.GetValue<int>("Message2");
 		}
 	}
 }

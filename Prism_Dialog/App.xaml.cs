@@ -16,8 +16,9 @@ namespace Prism_Dialog
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-			// ダイアログ表示時に追加される
-			containerRegistry.RegisterDialog<Views.Dialog, ViewModels.DialogViewModel>();
-		}
+            // ダイアログ表示時に追加される
+            //containerRegistry.RegisterDialog<Dialog, ViewModels.DialogViewModel>();
+            containerRegistry.RegisterDialog<Dialog>();
+        }
     }
 }

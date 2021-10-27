@@ -26,24 +26,19 @@ namespace Prism_Dialog.ViewModels
 		public ReactiveCommand ShowDialgo { get; } = new ReactiveCommand();
 
 		/// <summary>
-		/// ダイアログ表示の戻り値
-		/// </summary>
-		public IDialogResult DialogResult;
-
-		/// <summary>
-		/// ダイアログからの戻り値 Value値
+		/// ダイアログからの戻り値 文字列
 		/// </summary>
 		public ReactivePropertySlim<string> DialogValue1 { get; } = new ReactivePropertySlim<string>();
 
 		/// <summary>
-		/// ダイアログからの戻り値 Value値
+		/// ダイアログからの戻り値 数値
 		/// </summary>
-		public ReactivePropertySlim<string> DialogValue2 { get; } = new ReactivePropertySlim<string>();
+		public ReactivePropertySlim<int> DialogValue2 { get; } = new ReactivePropertySlim<int>();
 
 		/// <summary>
 		/// IDialogServiceの情報
 		/// </summary>
-		private readonly IDialogService dlgService = null;
+		private readonly IDialogService dlgService;
 
 		/// <summary>
 		/// コンストラクタ
@@ -52,15 +47,22 @@ namespace Prism_Dialog.ViewModels
 		public MainWindowViewModel(IDialogService dialogService)
         {
 			// IDialogServiceの情報を取得
-			this.dlgService = dialogService;
+			dlgService = dialogService;
 			// Subscribeにダイアログ表示メソッドを設定し、戻り値の処理を行う
-			ShowDialgo.Subscribe(_ =>
+			_ = ShowDialgo.Subscribe(_ =>
 			{
-				DialogResult = showDialog("メインウィンドウからのメッセージ1", 2);
+				IDialogResult result = showDialog("メインウィンドウからのメッセージ1", 2);
 				// ButtonResultがYesならKey名「key1」の値を取得する。間違ったkey名だとNullを返すので注意が必要。
-				DialogValue1.Value = DialogResult.Result == ButtonResult.Yes ? $"Key1の値：{DialogResult.Parameters.GetValue<string>("key1")}" : "いいえが押されました";
-				// ButtonResultがYesならKey名「key2」の値を取得する。間違ったkey名だとNullを返すので注意が必要。
-				DialogValue2.Value = DialogResult.Result == ButtonResult.Yes ? $"Key2の値：{DialogResult.Parameters.GetValue<string>("key2")}" : "いいえが押されました";
+				if (result.Result == ButtonResult.Yes)
+				{
+					DialogValue1.Value = $"Key1の値：{result.Parameters.GetValue<string>("key1")}";
+					DialogValue2.Value = result.Parameters.GetValue<int>("key2");
+				}
+				else
+				{
+					DialogValue1.Value = "いいえが押されました";
+					DialogValue2.Value = 0;
+				}
 			}).AddTo(Disposable);
 		}
 
@@ -80,8 +82,16 @@ namespace Prism_Dialog.ViewModels
 		private IDialogResult showDialog(string message1, int message2)
 		{
 			IDialogResult result = null;
+			// パラメータを渡す手法その１
+			//IDialogParameters parameters = new DialogParameters { { "Message1", message1 }, { "Message2", message2 } };
+			// パラメータを渡す手法その２
+			IDialogParameters parameters = new DialogParameters();
+			parameters.Add("Message1", message1);
+			parameters.Add("Message2", message2);
+
 			// ShowDialogの引数1：開くダイアログの名称 引数2：ダイアログに渡すパラメータ(KeyとValueのセット)で複数可 引数3：受け取る戻り値
-			this.dlgService.ShowDialog("Dialog", new DialogParameters { { "Message1", message1 }, { "Message2", message2 } }, ret => result = ret);
+			dlgService.ShowDialog("Dialog", parameters, dialogResult => result = dialogResult);
+
 			return result;
 		}
 	}
